@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      tags:
+        - "192.168.1.17:8000/library/company-entity-server:latest"
+      args:
+        - network=host
+        - http_proxy=http://192.168.1.129:10809
+        - https_proxy=http://192.168.1.129:10809
+    restart: always
+    ports:
+      - 3300:3300
+    # volumes:
+    #   - ./:/app
+    environment:
+      - NODE_ENV=development
+      - PORT=3300
+      - TZ=Asia/Shanghai

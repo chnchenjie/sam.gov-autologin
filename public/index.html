@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pino Log Viewer</title>
+  <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    #terminal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+
+  <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
+  <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+  <script>
+    const terminal = new Terminal({
+      // fontSize: 14,
+      convertEol: true,
+      fontFamily: 'Consolas, "Courier New", monospace',
+    });
+    const fitAddon = new FitAddon.FitAddon();
+
+    // 绑定到DOM元素
+    terminal.open(document.getElementById('terminal'));
+
+    // 连接到Socket.io服务器
+    const socket = io();
+
+    // 监听名为'log'的Socket.io事件
+    socket.on('log', (log) => {
+      console.log(log);
+      terminal.write(log+'\r\n'); // 输出到终端
+      terminal.scrollToBottom(); // 滚动到底部
+    });
+
+    // 适应终端大小
+    terminal.loadAddon(fitAddon);
+    fitAddon.fit();
+    window.addEventListener('resize', () => {
+      fitAddon.fit();
+    });
+  </script>
+</body>
+</html>
